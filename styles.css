@@ -450,6 +450,7 @@ body {
   position: relative;
   z-index: 1;
   transition: transform 0.3s ease;
+  
 }
 
 .project-card:hover .project-icon {
