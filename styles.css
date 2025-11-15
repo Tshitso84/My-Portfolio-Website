@@ -93,7 +93,7 @@ body {
   font-weight: 200;
   color: var(--text-primary);
   white-space: nowrap;
-  font-family: photograph signature;
+  font-family: "photograph signature";
 }
 
 .nav {
