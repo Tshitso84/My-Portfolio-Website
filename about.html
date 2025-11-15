@@ -9,14 +9,27 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Julius+Sans+One&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
+  <script src="https://unpkg.com/scrollreveal"></script>
 </head>
 <body>
+  <!-- Loading Animation -->
+<div id="loading-animation" class="loading-container">
+  <div class="loading-content">
+    <div class="loading-logo">TM</div>
+    <div class="loading-spinner">
+      <div class="spinner-circle"></div>
+      <div class="spinner-circle"></div>
+      <div class="spinner-circle"></div>
+    </div>
+    <p class="loading-text">Loading...</p>
+  </div>
+</div>
   <!-- Header -->
   <header class="header">
     <div class="container">
       <h1 class="logo">TM</h1>
       <nav class="nav">
-        <a href="index.html" class="nav-link active">Home</a>
+        <a href="index.html" class="nav-link">Home</a>
         <a href="projects.html" class="nav-link">Projects</a>
         <a href="about.html" class="nav-link">About</a>
         <a href="contact.html" class="nav-link">Contact</a>
@@ -40,12 +53,7 @@
     </div>
   </header>
 
-  <div id="mobile-menu" class="mobile-menu">
-    <a href="index.html" class="mobile-nav-link">Home</a>
-    <a href="projects.html" class="mobile-nav-link">Projects</a>
-    <a href="about.html" class="mobile-nav-link">About</a>
-    <a href="contact.html" class="mobile-nav-link">Contact</a>
-  </div>
+  <!-- Duplicate mobile menu removed -->
 
   <section class="page-section fade-in">
     <div class="container-narrow">

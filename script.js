@@ -3,6 +3,9 @@ const themeToggle = document.getElementById('theme-toggle');
 const html = document.documentElement;
 const themeIcon = document.querySelector('.theme-icon');
 
+// Loading Animation Elements
+const loadingAnimation = document.getElementById('loading-animation');
+
 // Load saved theme preference
 function loadTheme() {
   const savedTheme = localStorage.getItem('theme');
@@ -74,6 +77,124 @@ function closeMobileMenu() {
   }
 }
 
+// Initialize ScrollReveal Animations
+function initScrollReveal() {
+  // Common reveal configuration
+  const sr = ScrollReveal({
+    origin: 'bottom',
+    distance: '30px',
+    duration: 800,
+    delay: 200,
+    easing: 'cubic-bezier(0.5, 0, 0, 1)',
+    reset: false,
+    mobile: true
+  });
+
+  // Hero section animations
+  sr.reveal('.hero-title', { 
+    origin: 'top',
+    distance: '50px',
+    delay: 300
+  });
+  
+  sr.reveal('.hero-subtitle', { 
+    delay: 500 
+  });
+  
+  sr.reveal('.hero-cta', { 
+    delay: 700 
+  });
+
+  // Skills section animations
+  sr.reveal('.section-title', { 
+    origin: 'top',
+    distance: '40px'
+  });
+  
+  sr.reveal('.skill-card', { 
+    interval: 200 
+  });
+
+  // Project cards animations
+  sr.reveal('.project-card', { 
+    interval: 150 
+  });
+
+  // About page animations
+  sr.reveal('.about-text p', { 
+    interval: 150 
+  });
+  
+  sr.reveal('.skill-tag', { 
+    interval: 100,
+    distance: '20px'
+  });
+
+  // Contact page animations
+  sr.reveal('.contact-card', { 
+    origin: 'top',
+    distance: '40px'
+  });
+  
+  sr.reveal('.info-item', { 
+    interval: 150 
+  });
+
+  // Page title animations
+  sr.reveal('.page-title', { 
+    origin: 'top',
+    distance: '40px'
+  });
+  
+  sr.reveal('.page-subtitle', { 
+    delay: 300 
+  });
+}
+
+// Fade-in animation on scroll (fallback)
+function handleScrollAnimation() {
+  const elements = document.querySelectorAll('.fade-in');
+  
+  elements.forEach(element => {
+    const rect = element.getBoundingClientRect();
+    const windowHeight = window.innerHeight;
+    
+    if (rect.top < windowHeight - 50) {
+      element.classList.add('visible');
+    }
+  });
+}
+
+// Initialize fade-in for elements already in view
+function initFadeIn() {
+  handleScrollAnimation();
+}
+
+// Hide Loading Animation
+function hideLoadingAnimation() {
+  if (loadingAnimation) {
+    // Add a small delay to ensure content is ready
+    setTimeout(() => {
+      loadingAnimation.classList.add('hidden');
+      
+      // Remove from DOM after animation completes
+      setTimeout(() => {
+        if (loadingAnimation.parentNode) {
+          loadingAnimation.parentNode.removeChild(loadingAnimation);
+        }
+      }, 500);
+    }, 800); // Minimum display time
+  }
+}
+
+// Show Loading Animation (for page transitions)
+function showLoadingAnimation() {
+  if (loadingAnimation) {
+    loadingAnimation.classList.remove('hidden');
+  }
+}
+
+
 // Fade-in animation on scroll
 function handleScrollAnimation() {
   const elements = document.querySelectorAll('.fade-in');
@@ -120,10 +241,64 @@ function handleHeaderScroll() {
   lastScrollTop = scrollTop;
 }
 
+// Handle page navigation with loading animation
+function handlePageNavigation() {
+  const links = document.querySelectorAll('a[href]:not([href^="#"]):not([href^="mailto:"])');
+  
+  links.forEach(link => {
+    link.addEventListener('click', (e) => {
+      // Only show loading for internal navigation
+      if (link.href && link.href.startsWith(window.location.origin)) {
+        e.preventDefault();
+        showLoadingAnimation();
+        
+        // Navigate after showing loading animation
+        setTimeout(() => {
+          window.location.href = link.href;
+        }, 300);
+      }
+    });
+  });
+}
+
+// Set active nav links based on current URL
+function setActiveNavLinks() {
+  const currentFile = window.location.pathname.split('/').pop() || 'index.html';
+  const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
+
+  navLinks.forEach(link => {
+    const href = link.getAttribute('href') || '';
+    const linkFile = href.split('/').pop();
+
+    if (linkFile === currentFile) {
+      link.classList.add('active');
+    } else {
+      link.classList.remove('active');
+    }
+  });
+}
+
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
   // Load theme
   loadTheme();
+
+  // Initialize ScrollReveal animations
+  initScrollReveal();
+
+   // Initialize page navigation handling
+  handlePageNavigation();
+  // Update active state for nav links
+  setActiveNavLinks();
+
+   // Hide loading animation when page is fully loaded
+  window.addEventListener('load', () => {
+    // Add a minimum display time for better UX
+    setTimeout(hideLoadingAnimation, 1000);
+  });
+
+  // Fallback: hide loading animation if page takes too long
+  setTimeout(hideLoadingAnimation, 3000);
   
   // Initialize fade-in animations
   initFadeIn();
