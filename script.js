@@ -38,7 +38,21 @@ const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
 const mobileMenu = document.getElementById('mobile-menu');
 
 function toggleMobileMenu() {
+  // Always set display first
+  if (!mobileMenu.classList.contains('active')) {
+    mobileMenu.style.display = 'flex';
+    // Force reflow
+    mobileMenu.offsetHeight;
+  }
+  
   mobileMenu.classList.toggle('active');
+  
+  // Remove display after animation if closing
+  if (!mobileMenu.classList.contains('active')) {
+    setTimeout(() => {
+      mobileMenu.style.display = 'none';
+    }, 300);
+  }
   
   // Animate hamburger menu
   const spans = mobileMenuToggle.querySelectorAll('span');
