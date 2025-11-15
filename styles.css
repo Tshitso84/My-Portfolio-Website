@@ -28,6 +28,14 @@
   --hero-gradient-end: #1e293b
 }
 
+@font-face {
+    font-family: 'MyCustomFont';
+    src: url('fonts/Photograph\ Signature.ttf') format('truetype');
+         
+    font-weight: normal;
+    font-style: normal;
+}
+
 /* Reset & Base Styles */
 * {
   margin: 0;
@@ -93,7 +101,7 @@ body {
   font-weight: 200;
   color: var(--text-primary);
   white-space: nowrap;
-  font-family: "photograph signature";
+  font-family: "MyCustomFont", cursive;
 }
 
 .nav {
