@@ -1,20 +1,36 @@
-// Theme Toggle Functionality
+// Enhanced Theme Management with System Preference Detection
 const themeToggle = document.getElementById('theme-toggle');
 const html = document.documentElement;
 const themeIcon = document.querySelector('.theme-icon');
 
-// Loading Animation Elements
-const loadingAnimation = document.getElementById('loading-animation');
-
-// Load saved theme preference
-function loadTheme() {
+// Theme management
+function initTheme() {
+  // Check for saved theme preference or use system preference
   const savedTheme = localStorage.getItem('theme');
-  if (savedTheme === 'light') {
-    html.classList.remove('dark');
-    updateThemeIcon(false);
+  const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  
+  if (savedTheme) {
+    // Use saved preference
+    applyTheme(savedTheme === 'dark');
   } else {
+    // Use system preference
+    applyTheme(systemPrefersDark);
+    localStorage.setItem('theme', systemPrefersDark ? 'dark' : 'light');
+  }
+  
+  // Update theme icon
+  updateThemeIcon(html.classList.contains('dark'));
+  
+  // Listen for system theme changes
+  watchSystemThemeChanges();
+}
+
+// Apply theme
+function applyTheme(isDark) {
+  if (isDark) {
     html.classList.add('dark');
-    updateThemeIcon(true);
+  } else {
+    html.classList.remove('dark');
   }
 }
 
@@ -23,17 +39,159 @@ function updateThemeIcon(isDark) {
   if (themeIcon) {
     if (isDark) {
       themeIcon.className = 'fas fa-sun theme-icon';
+      themeIcon.title = 'Switch to light mode';
     } else {
       themeIcon.className = 'fas fa-moon theme-icon';
+      themeIcon.title = 'Switch to dark mode';
     }
   }
 }
 
-// Toggle theme
+// Toggle theme manually
 function toggleTheme() {
   const isDark = html.classList.toggle('dark');
-  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  const newTheme = isDark ? 'dark' : 'light';
+  
+  // Save manual preference
+  localStorage.setItem('theme', newTheme);
+  localStorage.setItem('theme-manual', 'true'); // Mark as manually set
+  
   updateThemeIcon(isDark);
+  
+  // Show theme change notification
+  showThemeChangeNotification(newTheme);
+}
+
+// Watch for system theme changes
+function watchSystemThemeChanges() {
+  const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+  
+  mediaQuery.addEventListener('change', (e) => {
+    // Only follow system changes if user hasn't manually set preference
+    const isManual = localStorage.getItem('theme-manual') === 'true';
+    
+    if (!isManual) {
+      const systemPrefersDark = e.matches;
+      applyTheme(systemPrefersDark);
+      localStorage.setItem('theme', systemPrefersDark ? 'dark' : 'light');
+      updateThemeIcon(systemPrefersDark);
+      
+      // Show system theme change notification
+      showSystemThemeChangeNotification(systemPrefersDark ? 'dark' : 'light');
+    }
+  });
+}
+
+// Reset to system preference
+function resetToSystemTheme() {
+  const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  
+  applyTheme(systemPrefersDark);
+  localStorage.setItem('theme', systemPrefersDark ? 'dark' : 'light');
+  localStorage.removeItem('theme-manual'); // Remove manual flag
+  
+  updateThemeIcon(systemPrefersDark);
+  
+  // Show reset notification
+  showThemeResetNotification();
+}
+
+// Theme change notifications
+function showThemeChangeNotification(theme) {
+  // Remove existing notification
+  const existingNotification = document.getElementById('theme-notification');
+  if (existingNotification) {
+    existingNotification.remove();
+  }
+  
+  const notification = document.createElement('div');
+  notification.id = 'theme-notification';
+  notification.className = 'theme-notification';
+  notification.innerHTML = `
+    <span>Switched to ${theme} mode</span>
+    <button class="theme-undo-btn" onclick="resetToSystemTheme()">
+      <i class="fas fa-undo"></i> Reset to system
+    </button>
+  `;
+  
+  document.body.appendChild(notification);
+  
+  // Show notification
+  setTimeout(() => {
+    notification.classList.add('show');
+  }, 100);
+  
+  // Hide after 4 seconds
+  setTimeout(() => {
+    notification.classList.remove('show');
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.parentNode.removeChild(notification);
+      }
+    }, 300);
+  }, 4000);
+}
+
+function showSystemThemeChangeNotification(theme) {
+  const notification = document.createElement('div');
+  notification.id = 'theme-notification';
+  notification.className = 'theme-notification system-theme';
+  notification.innerHTML = `
+    <span>Following system preference: ${theme} mode</span>
+  `;
+  
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.classList.add('show');
+  }, 100);
+  
+  setTimeout(() => {
+    notification.classList.remove('show');
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.parentNode.removeChild(notification);
+      }
+    }, 300);
+  }, 3000);
+}
+
+function showThemeResetNotification() {
+  const notification = document.createElement('div');
+  notification.id = 'theme-notification';
+  notification.className = 'theme-notification';
+  notification.innerHTML = `
+    <span>Reset to system theme preference</span>
+  `;
+  
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.classList.add('show');
+  }, 100);
+  
+  setTimeout(() => {
+    notification.classList.remove('show');
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.parentNode.removeChild(notification);
+      }
+    }, 300);
+  }, 3000);
+}
+
+// Get current theme info
+function getThemeInfo() {
+  const isDark = html.classList.contains('dark');
+  const isManual = localStorage.getItem('theme-manual') === 'true';
+  const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  
+  return {
+    current: isDark ? 'dark' : 'light',
+    isManual,
+    system: systemPrefersDark ? 'dark' : 'light',
+    isFollowingSystem: !isManual
+  };
 }
 
 // Mobile Menu Toggle
@@ -170,6 +328,9 @@ function initFadeIn() {
   handleScrollAnimation();
 }
 
+// Loading Animation Elements
+const loadingAnimation = document.getElementById('loading-animation');
+
 // Hide Loading Animation
 function hideLoadingAnimation() {
   if (loadingAnimation) {
@@ -280,8 +441,8 @@ function setActiveNavLinks() {
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
-  // Load theme
-  loadTheme();
+  // Initialize theme with system preference detection
+  initTheme();
 
   // Initialize ScrollReveal animations
   initScrollReveal();

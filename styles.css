@@ -28,6 +28,120 @@
   --hero-gradient-end: #1e293b
 }
 
+/* Theme Notification Styles */
+.theme-notification {
+  position: fixed;
+  top: 90px;
+  right: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 8px 30px var(--shadow);
+  z-index: 10000;
+  transform: translateX(400px);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: 300px;
+  backdrop-filter: blur(10px);
+}
+
+.theme-notification.show {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.theme-notification.system-theme {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  color: white;
+  border: none;
+}
+
+.theme-notification span {
+  display: block;
+  color: var(--text-primary);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.theme-notification.system-theme span {
+  color: white;
+}
+
+.theme-undo-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.theme-undo-btn:hover {
+  background: var(--bg-primary);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Enhanced theme button styles */
+.theme-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.theme-btn:hover::before {
+  left: 100%;
+}
+
+/* Theme status indicator (optional) */
+.theme-status {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.theme-status.following-system {
+  opacity: 1;
+  background: #10b981; /* Green color for system following */
+}
+
+/* Responsive notifications */
+@media (max-width: 768px) {
+  .theme-notification {
+    top: 80px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+    transform: translateY(-100px);
+  }
+  
+  .theme-notification.show {
+    transform: translateY(0);
+  }
+}
+
 /* Animation performance improvements */
 .skill-card,
 .project-card,
@@ -306,7 +420,7 @@ body {
 .mobile-menu-btn span {
   width: 25px;
   height: 3px;
-  background-color: var(--text-primary);
+  background-color: var(--accent);
   border-radius: 2px;
   transition: all 0.3s ease;
 }
